@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -142,8 +143,13 @@
         }
 
         @keyframes glow {
-            from { filter: drop-shadow(0 0 20px var(--accent-glow)); }
-            to { filter: drop-shadow(0 0 40px var(--accent-glow)); }
+            from {
+                filter: drop-shadow(0 0 20px var(--accent-glow));
+            }
+
+            to {
+                filter: drop-shadow(0 0 40px var(--accent-glow));
+            }
         }
 
         .hero-text h2 {
@@ -442,6 +448,7 @@
         }
     </style>
 </head>
+
 <body>
     <!-- Custom Cursor -->
     <div class="cursor"></div>
@@ -468,7 +475,10 @@
             <div class="hero-text">
                 <h1>Abdul Basith</h1>
                 <h2>Backend Developer</h2>
-                <p>Motivated Backend Developer and 2025 BTech graduate with seven months of internship experience. Skilled in React, Python, and MySQL/PostgreSQL, with experience building and deploying real-world applications on cloud platforms. Strong in problem-solving, teamwork, and communication.</p>
+                <p>Motivated Backend Developer and 2025 BTech graduate with seven months of internship experience.
+                    Skilled in Java, Spring Boot, React, and MySQL/PostgreSQL, with experience building and deploying
+                    real-world applications on cloud platforms. Strong in problem-solving, teamwork, and communication.
+                </p>
                 <div class="cta-buttons">
                     <a href="#projects" class="btn btn-primary">View Projects</a>
                     <a href="#contact" class="btn btn-secondary">Contact Me</a>
@@ -482,18 +492,14 @@
         <h2 class="section-title">Skills & Technologies</h2>
         <div class="skills-grid">
             <div class="skill-card">
-    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/php/php-original.svg" alt="PHP">
-    <h3>PHP</h3>
-</div>
-
-            <div class="skill-card">
-                <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg" alt="Python">
-                <h3>Python</h3>
+                <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/java/java-original.svg" alt="Java">
+                <h3>Java</h3>
             </div>
-            <!-- <div class="skill-card">
-                <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/django/django-plain.svg" alt="Django">
-                <h3>Django</h3>
-            </div> -->
+            <div class="skill-card">
+                <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/spring/spring-original.svg"
+                    alt="Spring Boot">
+                <h3>Spring Boot</h3>
+            </div>
             <div class="skill-card">
                 <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg" alt="React">
                 <h3>React</h3>
@@ -513,9 +519,10 @@
             <div class="skill-card">
                 <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg" alt="GitHub">
                 <h3>GitHub</h3>
-            </div> 
+            </div>
             <div class="skill-card">
-                <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/postman/postman-original.svg" alt="Postman">
+                <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/postman/postman-original.svg"
+                    alt="Postman">
                 <h3>Postman</h3>
             </div>
         </div>
@@ -529,7 +536,9 @@
                 <img src="project1.png" alt="Speeki AI" class="project-image">
                 <div class="project-content">
                     <h3>Speeki AI</h3>
-                    <p>Optimized backend APIs to reliably support over 10,000 real-time users. Designed Python-based endpoints with ML team integration for efficient AI responses and accurate user progress tracking.</p>
+                    <p>Optimized backend APIs to reliably support over 10,000 real-time users. Designed Java Spring
+                        Boot-based endpoints with ML team integration for efficient AI responses and accurate user
+                        progress tracking.</p>
                     <div class="project-links">
                         <a href="https://app.speekiai.com" target="_blank">View Live →</a>
                     </div>
@@ -540,7 +549,8 @@
                 <img src="project2.png" alt="Gemini Clone" class="project-image">
                 <div class="project-content">
                     <h3>Gemini Clone</h3>
-                    <p>Built a full-featured Gemini AI clone using React and Google AI Studio API. Implemented real-time AI responses with clean UI/UX and efficient state management.</p>
+                    <p>Built a full-featured Gemini AI clone using React and Google AI Studio API. Implemented real-time
+                        AI responses with clean UI/UX and efficient state management.</p>
                     <div class="project-links">
                         <a href="https://gemini-by-basith.vercel.app/" target="_blank">View Live →</a>
                     </div>
@@ -551,7 +561,9 @@
                 <img src="project3.png" alt="Job Alerts App" class="project-image">
                 <div class="project-content">
                     <h3>AI-Powered Job Notification System</h3>
-                    <p>React frontend on Vercel with FastAPI backend on Render. Implemented cron jobs for automated job scraping with Gemini AI analysis, delivering top 5 matched jobs daily via Telegram bot.</p>
+                    <p>React frontend on Vercel with Spring Boot backend on Render. Implemented scheduled tasks for
+                        automated job scraping with Gemini AI analysis, delivering top 5 matched jobs daily via Telegram
+                        bot.</p>
                     <div class="project-links">
                         <a href="https://telegram-job-alert.vercel.app" target="_blank">View Live →</a>
                     </div>
@@ -568,13 +580,18 @@
                 <h3>Trogon Media</h3>
                 <h4>Software Developer | June 2025 - Present</h4>
                 <ul>
-                    <li>Designed and optimized database schemas, improving query performance and ensuring scalable data flow across modules</li>
+                    <li>Designed and optimized database schemas, improving query performance and ensuring scalable data
+                        flow across modules</li>
                     <li>Introduced caching and other techniques to reduce API load up to 25%</li>
-                    <li>Implemented queuing mechanism to prevent Firebase push notification timeouts and ensure reliable message delivery</li>
-                    <li>Developed and tested REST APIs using Postman, ensuring accurate request and response handling</li>
-                    <li>Integrated Razorpay payment gateway for secure online transactions with order creation and payment verification</li>
+                    <li>Implemented queuing mechanism to prevent Firebase push notification timeouts and ensure reliable
+                        message delivery</li>
+                    <li>Developed and tested REST APIs using Postman, ensuring accurate request and response handling
+                    </li>
+                    <li>Integrated Razorpay payment gateway for secure online transactions with order creation and
+                        payment verification</li>
                     <li>Developed installment purchase (EMI) features with backend validation and payment tracking</li>
-                    <li>Collaborated with front-end team to deliver fully functional modules with robust server-side logic</li>
+                    <li>Collaborated with front-end team to deliver fully functional modules with robust server-side
+                        logic</li>
                     <li>Implemented Zoom API integration to automate meeting creation and user joining workflows</li>
                 </ul>
             </div>
@@ -655,4 +672,5 @@
         });
     </script>
 </body>
+
 </html>
