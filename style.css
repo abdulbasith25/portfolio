@@ -58,18 +58,18 @@ nav {
   min-height: 100vh; display: flex; align-items: center;
   padding: 8rem 2rem 4rem;
   max-width: 900px; margin: 0 auto;
+  position: relative;
 }
-.hero-split {
-  width: 100%; display: flex; align-items: center;
-  gap: 4rem;
-}
-.hero-inner { flex: 1; min-width: 0; }
+.hero-inner { width: 100%; }
 
-/* ── POST TEASER (hero aside) ── */
-.hero-aside { flex-shrink: 0; width: 230px; }
-
+/* ── POST TEASER (absolute — lives in the right dead space) ── */
 .post-teaser {
   display: block; text-decoration: none; color: inherit;
+  position: absolute;
+  right: -260px;          /* sits outside the 900px hero box */
+  top: 50%;
+  transform: translateY(-50%);
+  width: 220px;
   background: var(--bg-card);
   border: 1px solid var(--accent-border);
   border-radius: 10px;
@@ -80,7 +80,7 @@ nav {
 .post-teaser:hover {
   border-color: rgba(201,168,76,0.45);
   box-shadow: 0 4px 28px rgba(201,168,76,0.13);
-  transform: translateY(-2px);
+  transform: translateY(calc(-50% - 2px));
 }
 
 .post-teaser-eyebrow {
@@ -94,18 +94,15 @@ nav {
   background: var(--accent); flex-shrink: 0;
   animation: pulse 2s infinite;
 }
-
 .post-teaser-title {
   font-size: 0.82rem; font-weight: 600; line-height: 1.45;
   color: var(--text); margin-bottom: 0.75rem;
 }
-
 .post-teaser-meta {
   font-size: 0.68rem; color: var(--text-dim);
   font-family: 'JetBrains Mono', monospace;
   margin-bottom: 1rem;
 }
-
 .post-teaser-cta {
   font-size: 0.72rem; color: var(--text-dim);
   font-weight: 500; transition: color 0.3s;
@@ -113,10 +110,8 @@ nav {
 }
 .post-teaser:hover .post-teaser-cta { color: var(--accent); }
 
-@media (max-width: 700px) {
-  .hero-aside { display: none; }
-  .hero-split { flex-direction: column; }
-}
+/* hide when viewport is too narrow to show the card without overlap */
+@media (max-width: 1160px) { .post-teaser { display: none; } }
 
 .hero-label {
   font-size: 0.75rem; letter-spacing: 3px; text-transform: uppercase;
