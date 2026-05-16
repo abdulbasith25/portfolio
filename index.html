@@ -17,6 +17,7 @@
     <ul class="nav-links">
         <li><a href="#work">Experience</a></li>
         <li><a href="#projects">Projects</a></li>
+        <li><a href="#writing">Writing</a></li>
         <li><a href="#skills">Skills</a></li>
         <li><a href="#contact">Contact</a></li>
     </ul>
@@ -212,6 +213,70 @@ Result: zero audit code inside business logic. Add <span class="highlight">@Audi
 
 <hr class="divider">
 
+<!-- WRITING -->
+<section id="writing">
+    <p class="section-label reveal">Writing</p>
+    <h2 class="section-title reveal">Things I actually worked through</h2>
+    <p class="section-desc reveal">Not tutorials. Notes from real production problems — what broke, why it broke, and what it taught me.</p>
+
+    <div class="blog-card reveal" onclick="openPost()" role="button" tabindex="0" aria-label="Read blog post: That One Time the PF Report Went Blank for a Single Person" onkeydown="if(event.key==='Enter')openPost()">
+        <div class="blog-card-meta">
+            <span class="blog-tag">Legacy ERP</span>
+            <span class="blog-tag">Refactoring</span>
+            <span class="blog-read">4 min read · May 2026</span>
+        </div>
+        <h3 class="blog-title">That One Time the PF Report Went Blank for a Single Person</h3>
+        <p class="blog-excerpt">The HR person called and said — "the PF report is fine for everyone, but one person's data isn't showing up." No error. No crash. Just gone. Works for 23 people, silently breaks for one.</p>
+        <span class="blog-cta">Read post ↗</span>
+    </div>
+</section>
+
+<!-- BLOG MODAL -->
+<div class="modal-overlay" id="blogModal" role="dialog" aria-modal="true" aria-label="Blog post" onclick="handleModalClick(event)">
+    <div class="modal-panel" id="modalPanel">
+        <button class="modal-close" onclick="closePost()" aria-label="Close">&times;</button>
+        <div class="modal-meta">
+            <span class="blog-tag">Legacy ERP</span>
+            <span class="blog-tag">Refactoring</span>
+            <span class="blog-read">4 min read · May 2026</span>
+        </div>
+        <h2 class="modal-title">That One Time the PF Report Went Blank for a Single Person</h2>
+        <div class="modal-body">
+            <p>The HR person called and said — <em>"the PF report is fine for everyone, but one person's data isn't showing up."</em></p>
+            <p>No error. No crash. Just gone. Works for 23 people, silently breaks for one. Classic.</p>
+
+            <h4>The System</h4>
+            <p>I maintain a legacy ERP at work — a PHP CodeIgniter 3 app that's been running in production for years. It handles payroll, attendance, reports — the full thing. Most of the "new" work I do is in Spring Boot, but production is this. And honestly, working in a 2000-line legacy codebase has taught me more about software design than any clean tutorial project.</p>
+            <p>The PF/EPF salary report is one of the trickier ones. It pulls every employee for a month, calculates their Provident Fund contributions based on their salary template, and displays it in a printable table. Simple enough on paper.</p>
+
+            <h4>The Bug</h4>
+            <p>After going through the database first (records were all there, nothing missing), I finally just read the function carefully.</p>
+            <p>Deep inside the loop that builds the report, there was a condition: if an employee's salary template had PF turned off, they got silently removed from the output array. No log entry. No flag. No blank row. Just... <code>unset and continue</code>.</p>
+            <p>The affected employee had PF temporarily disabled on their template — legitimately, during a salary restructuring — but the HR team was still expecting them in the report. The code had no way to communicate why someone was missing. It just removed them.</p>
+            <p>The immediate fix was small: instead of removing the person, flag them and still include them in the output with a visual indicator. The report stays accurate, HR can see who's excluded and why.</p>
+            <p>But the real problem was structural.</p>
+
+            <h4>Strangler Fig</h4>
+            <p>The PF calculation logic was sitting inside the controller — attendance math, percentage calculations, database reads, and even a save operation for manual overrides, all in the same function. And the whole thing was duplicated for two employee types.</p>
+            <p>This is where the Strangler Fig pattern clicked for me. The idea is simple: don't rewrite the old thing. Build the new thing next to it, make the old code delegate to it, and slowly let the new structure take over. The host tree doesn't fall all at once.</p>
+            <p>In practice: I created a dedicated <code>PfReportService</code> class that owns just the calculation logic. The controller keeps its existing routes — same URLs, same views, nothing breaks. It just hands off the work to the service and maps the result back to the view. The duplicate code for the second employee type becomes a second method on the same class instead of another copy-pasted function.</p>
+            <p>The old inline logic is still there for now. But it's in the process of being replaced, one piece at a time, without touching anything that's in production.</p>
+
+            <h4>Why This Stuck With Me</h4>
+            <p>I spend most of my personal project time in Spring Boot — that's what I'm building toward. But this bug taught me a few things that apply regardless of the stack.</p>
+            <ul>
+                <li><strong>Silent failures are worse than crashes.</strong> An exception would've pointed me somewhere. This didn't. Even a single log line inside that condition would have saved 30 minutes of head-scratching. When I write services in Spring Boot now, I'm more deliberate about what gets logged versus what just silently falls through.</li>
+                <li><strong>The Strangler Fig works because it removes the pressure of rewriting everything at once.</strong> You see it in big Java migrations too — companies moving from monolithic Spring MVC apps to microservices don't flip a switch. They route one endpoint at a time. The pattern is the same, the language doesn't matter.</li>
+                <li><strong>Actually reading the code is usually faster than reproducing the bug.</strong> I spent 20 minutes trying to reproduce it before I just sat down and read the function. The answer was right there.</li>
+                <li><strong>Production codebases are messy.</strong> That's not a flaw, it's just reality. Learning to work inside that mess — carefully, without breaking things — is probably the most useful skill I'm picking up right now.</li>
+            </ul>
+            <p class="modal-sign-off">I write about things I'm actually working on. Thanks for reading.</p>
+        </div>
+    </div>
+</div>
+
+<hr class="divider">
+
 <!-- SKILLS -->
 <section id="skills">
     <p class="section-label reveal">Toolkit</p>
@@ -329,6 +394,22 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
         document.querySelector('.nav-links')?.classList.remove('open');
     });
 });
+
+// Blog modal
+function openPost() {
+    const m = document.getElementById('blogModal');
+    m.classList.add('open');
+    document.body.style.overflow = 'hidden';
+    m.querySelector('.modal-close').focus();
+}
+function closePost() {
+    document.getElementById('blogModal').classList.remove('open');
+    document.body.style.overflow = '';
+}
+function handleModalClick(e) {
+    if (!document.getElementById('modalPanel').contains(e.target)) closePost();
+}
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closePost(); });
 
 // Active nav tracking
 const sections = document.querySelectorAll('section[id]');
