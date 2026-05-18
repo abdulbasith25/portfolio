@@ -18,7 +18,7 @@
   --red: #c66;
 }
 
-html { scroll-behavior: smooth; }
+html { scroll-behavior: smooth; overflow-x: hidden; }
 
 body {
   font-family: 'Inter', -apple-system, sans-serif;
@@ -26,6 +26,7 @@ body {
   color: var(--text);
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
 }
 
 ::selection { background: var(--accent); color: var(--bg); }
@@ -66,7 +67,7 @@ nav {
 .post-teaser {
   display: block; text-decoration: none; color: inherit;
   position: absolute;
-  right: -260px;          /* sits outside the 900px hero box */
+  right: -80px;          /* sits outside the 900px hero box */
   top: 50%;
   transform: translateY(-50%);
   width: 220px;
