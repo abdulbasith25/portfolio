@@ -91,7 +91,7 @@
 <!-- PROJECTS -->
 <section id="projects">
     <p class="section-label reveal">Engineering</p>
-    <h2 class="section-title reveal">Two systems I built from scratch</h2>
+    <h2 class="section-title reveal">Systems I designed and shipped</h2>
     <p class="section-desc reveal">Not tutorials. Not clones. These are domain-specific backend systems where I made real architectural decisions — and learned from the ones that didn't work.</p>
 
     <!-- PROJECT 1: LoanLedger -->
@@ -220,6 +220,86 @@ Result: zero audit code inside business logic. Add <span class="highlight">@Audi
         </ul>
         <a href="https://github.com/abdulbasith2590/appointment_system" target="_blank" class="project-link">View source on GitHub ↗</a>
     </div>
+
+    <!-- PROJECT 3: Notification Platform -->
+    <div class="project reveal">
+        <div class="project-header">
+            <h3 class="project-name">Notification Platform</h3>
+            <span class="project-type">Multi-Tenant Infrastructure</span>
+        </div>
+        <p class="project-summary">
+            A Kafka-driven notification microservice built to decouple delivery from the calling system entirely.
+            A single REST call to the gateway dispatches to one, several, or all three channels — Email, SMS,
+            and Firebase push — without the caller knowing or caring which provider handles it. Designed for
+            multi-tenant use: each tenant gets its own Firebase app, initialized on-demand and cached.
+        </p>
+
+        <div class="project-arch">
+            <div class="project-arch-title">Request → Kafka → Channel Services</div>
+            <div class="arch-flow"><span class="highlight">POST /api/v1/notify</span> (notificationType: EMAIL | SMS | PUSH | ALL)
+  <span class="muted">│</span>
+  <span class="muted">├──</span> NotificationGatewayService validates channel-specific fields
+  <span class="muted">│   └──</span> email required for EMAIL, phone for SMS, fcmToken for PUSH
+  <span class="muted">│</span>
+  <span class="muted">├──</span> NotificationEventPublisher routes to Kafka topic(s)
+  <span class="muted">│   ├──</span> <span class="highlight">email-notification-topic</span>  → brevo-email-service
+  <span class="muted">│   ├──</span> <span class="highlight">sms-notification-topic</span>    → sms-service (2Factor API)
+  <span class="muted">│   └──</span> <span class="highlight">push-notification-topic</span>   → firebase-fcm-service
+  <span class="muted">│</span>
+  <span class="muted">└──</span> Gateway returns <span class="highlight">202 ACCEPTED</span> immediately — caller never waits on delivery</div>
+        </div>
+
+        <div class="project-arch" style="margin-top: 0;">
+            <div class="project-arch-title">Kafka Producer — Reliability Config</div>
+            <div class="arch-flow">Producer keyed by <span class="highlight">tenantId</span> — ordering guarantee within a tenant's messages
+  <span class="muted">│</span>
+  <span class="muted">├──</span> acks=all: broker waits for all in-sync replicas before confirming
+  <span class="muted">├──</span> enable.idempotence=true: exactly-once semantics, no duplicate messages on retry
+  <span class="muted">└──</span> retries=3 with CompletableFuture callback — failures logged with topic + partition + tenantId</div>
+        </div>
+
+        <div class="project-arch" style="margin-top: 0;">
+            <div class="project-arch-title">Consumer Error Handling — All Three Services</div>
+            <div class="arch-flow">AckMode: <span class="highlight">MANUAL_IMMEDIATE</span> — consumer only commits offset after confirmed delivery
+  <span class="muted">│</span>
+  <span class="muted">├──</span> DefaultErrorHandler with FixedBackOff: <span class="highlight">3 retries × 2 s</span> before dead-lettering
+  <span class="muted">├──</span> Delivery failure re-throws → Kafka retries without committing the offset
+  <span class="muted">└──</span> Each service independently recoverable — email outage doesn't affect SMS or push</div>
+        </div>
+
+        <div class="project-arch" style="margin-top: 0;">
+            <div class="project-arch-title">Multi-Tenant Firebase — Dynamic App Management</div>
+            <div class="arch-flow">Each tenant has a registered Firebase service-account JSON stored in PostgreSQL
+  <span class="muted">│</span>
+  <span class="muted">├──</span> FirebaseAppManager: @Cacheable("firebaseApps") keyed by tenantId
+  <span class="muted">│   └──</span> Caffeine cache: max 200 tenants, evicted after 60 min of inactivity
+  <span class="muted">│</span>
+  <span class="muted">├──</span> On cache miss: loads JSON from DB → GoogleCredentials → FirebaseApp.initializeApp()
+  <span class="muted">│   └──</span> Checks FirebaseApp.getInstance() first — guards against double-init on warm restart
+  <span class="muted">└──</span> Each push delivery: <span class="highlight">FirebaseMessaging.getInstance(app).send()</span> with correct tenant app</div>
+        </div>
+
+        <div class="tech-stack">
+            <span class="tech-tag">Spring Boot 3.2</span>
+            <span class="tech-tag">Spring Kafka</span>
+            <span class="tech-tag">Firebase Admin SDK</span>
+            <span class="tech-tag">Brevo (Sendinblue) API</span>
+            <span class="tech-tag">2Factor SMS API</span>
+            <span class="tech-tag">Caffeine Cache</span>
+            <span class="tech-tag">PostgreSQL</span>
+            <span class="tech-tag">Docker Compose</span>
+            <span class="tech-tag">Confluent Kafka 7.5</span>
+        </div>
+
+        <ul class="project-details">
+            <li>Four independent Spring Boot services — gateway, email, SMS, push — each deployable and scalable on its own</li>
+            <li>Tenant isolation at the Kafka level: tenantId is the partition key, so one tenant's burst doesn't reorder another's messages</li>
+            <li>Brevo transactional email: constructs SendSmtpEmail with sender, recipient, subject, and HTML body; re-throws on failure so the consumer retries</li>
+            <li>SMS via 2Factor REST API — phone sanitized to E.164 format, message URL-encoded before dispatch</li>
+            <li>Firebase service-account credentials never hardcoded — fetched per tenant from DB, deserialized into GoogleCredentials at runtime</li>
+            <li>Manual offset commit strategy: zero risk of losing an undelivered notification — the message stays in Kafka until delivery is confirmed</li>
+        </ul>
+    </div>
 </section>
 
 <hr class="divider">
@@ -276,6 +356,15 @@ Result: zero audit code inside business logic. Add <span class="highlight">@Audi
                 <li>MySQL</li>
                 <li>Caffeine Cache</li>
                 <li>Kafka</li>
+            </ul>
+        </div>
+        <div class="skill-group">
+            <div class="skill-group-title">Infrastructure</div>
+            <ul>
+                <li>Docker / Compose</li>
+                <li>Kafka (Confluent)</li>
+                <li>Microservices</li>
+                <li>Event-Driven Design</li>
             </ul>
         </div>
         <div class="skill-group">
