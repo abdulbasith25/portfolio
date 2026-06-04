@@ -209,7 +209,7 @@
 
         <p>If an employee's salary template had PF turned off, they got silently removed from the output array. No log entry. No flag. No blank row. Just <code>unset and continue</code>.</p>
 
-        <p>The affected employee had PF temporarily disabled on their template — legitimately, during a salary restructuring — but the HR team was still expecting them in the report. The code had no way to communicate why someone was missing. It just removed them.</p>
+        <p>But why did only one employee have PF disabled? It turned out the code for enabling PF had been commented out two years ago, with the system defaulting new templates to 1 (true). However, this specific employee joined five years ago. Because their legacy template predated that change, their status remained 0, causing them to be silently omitted while everyone else appeared normally.</p>
 
         <!-- ─────────── THE FIX ─────────── -->
         <h2>The Fix</h2>
